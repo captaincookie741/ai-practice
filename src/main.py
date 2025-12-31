@@ -1,8 +1,11 @@
-import os
 from langgraph.graph import StateGraph, MessagesState, START, END
 from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 
+from dotenv import load_dotenv
+load_dotenv()
+
+import os
 llm = ChatOpenAI(
     model="mistralai/devstral-2512:free",
     api_key=os.environ["OPENROUTER_API_KEY"],
