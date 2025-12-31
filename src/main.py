@@ -1,25 +1,25 @@
-from platform import system_alias
+import os
+from langgraph.graph import StateGraph, MessagesState, START, END
+from langchain_core.messages import HumanMessage
+from langchain_openai import ChatOpenAI
 
-from pydantic_ai.models.gemini import GeminiModel
-from pydantic_ai import Agent
+llm = ChatOpenAI(
+    model="mistralai/devstral-2512:free",
+    api_key=os.environ["OPENROUTER_API_KEY"],
+    base_url="https://openrouter.ai/api/v1",
+)
 
-from dotenv import load_dotenv
+def chatbot_node(state: MessagesState):
+    response = llm.invoke(state["messages"])
+    return {"messages": state["messages"] + [response]}
 
-import tools
-
-load_dotenv()
-model = GeminiModel("gemini-2.5-flash-preview-04-17")
-
-agent = Agent(model, system_prompt="You are an experienced programmer",
-              tools=[tools.list_files,tools.read_file,tools.rename_file])
-
-def main():
-    history = []
-    while True:
-        user_input = input("Input: ")
-        resp = agent.run_sync(user_input,message_history=history)
-        history = list(resp.all_messages())
-        print(resp.output)
+builder = StateGraph(MessagesState)
+builder.add_node("chatbot", chatbot_node)
+builder.add_edge(START, "chatbot")
+builder.add_edge("chatbot", END)
+graph = builder.compile()
 
 if __name__ == "__main__":
-    main()
+    state = {"messages": [HumanMessage(content="用一句话解释下什么是 LangGraph？")]}
+    result = graph.invoke(state)
+    print("AI:", result["messages"][-1].content)
