@@ -9,7 +9,11 @@ readme = "README.md"
 requires-python = ">=3.13,<4.0"
 dependencies = [
     "pydantic-ai (>=1.39.0,<2.0.0)",
-    "dotenv (>=0.9.9,<0.10.0)"
+    "dotenv (>=0.9.9,<0.10.0)",
+    "python-dotenv (>=1.2.1,<2.0.0)",
+    "langgraph (>=1.0.5,<2.0.0)",
+    "langchain-openai (>=1.1.6,<2.0.0)",
+    "langchain-core (>=1.2.5,<2.0.0)"
 ]
 
 [tool.poetry]

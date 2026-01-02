@@ -3,14 +3,22 @@ from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 
 from dotenv import load_dotenv
-load_dotenv()
+from pathlib import Path
 
 import os
+
+env_path = Path(__file__).resolve().parent.parent / ".env"
+load_dotenv(env_path,override=True)
+
+print("OPENROUTER_API_KEY =", os.getenv("OPENROUTER_API_KEY"))
+
 llm = ChatOpenAI(
     model="mistralai/devstral-2512:free",
     api_key=os.environ["OPENROUTER_API_KEY"],
     base_url="https://openrouter.ai/api/v1",
 )
+
+print("USING OPENROUTER:", llm)
 
 def chatbot_node(state: MessagesState):
     response = llm.invoke(state["messages"])
